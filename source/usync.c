@@ -43,6 +43,8 @@ uSyncObject* uSyncCreate()
 	if(!uSyncEnabled)
 		return 0;
 	obj = malloc(sizeof(uSyncObject));
+	if(obj == 0)
+		return 0;
 	_clear(obj, sizeof(uSyncObject));
 	obj->enabled[5] = 0;
 #ifdef _USYNC_HOLD_DATA
