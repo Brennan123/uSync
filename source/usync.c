@@ -83,7 +83,7 @@ int uSyncObtain(uSyncObject* obj)
 		obj->enabled[5] ^= 1;		/* If 2 processes get here at once,     */
 		canhas = obj->enabled[5];	/* worst case scenario, neither get it. */
 #ifdef _USYNC_HOLD_DATA
-		return obj->data * canhas;
+		return (void*)(((unsigned long int)obj->data) * canhas);
 #else
 		return 1 * canhas;
 #endif

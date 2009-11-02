@@ -5,7 +5,7 @@
 
 #ifndef _USYNC_H
 
-/* #define _USYNC_HOLD_DATA */
+#define _USYNC_HOLD_DATA
 
 /* We only use 8 bytes per sync object without holding data. */
 /* Only 12bytes with (on a 32bit system that doesn't raise sizes to align) */
