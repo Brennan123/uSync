@@ -1,4 +1,4 @@
-µSync is a general purpose synchronization library, based on being small and
+ÂµSync is a general purpose synchronization library, based on being small and
 lightweight. It requires very little RAM, and is quite fast.
 
 At last measurement, minimum requirements were:
@@ -8,7 +8,7 @@ At last measurement, minimum requirements were:
 2240 bytes for code. (ARM)
 
 ------------------------------------
-µSync is:
+ÂµSync is:
 Copyright (C)2009 SquidMan (Alex Marshall) <SquidMan72@gmail.com>
 Protected under the Lesser GNU GPL License
 
