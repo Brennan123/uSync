@@ -98,9 +98,6 @@ int uSyncRelease(uSyncObject* obj)
 		return 0;
 	if(obj->enabled[5]) {
 		obj->enabled[5] = 0;
-#ifdef _USYNC_HOLD_DATA
-		obj->data = 0;
-#endif
 		return 1;
 	}else{
 		return 1;
