@@ -1,155 +1,103 @@
 /*****************************************************************************
- *  µSync, a small synchronization function set. Inspired by uITRON.         *
+ *  µSync, a small synchronization function set.                             *
  *  Copyright (C)2009 SquidMan (Alex Marshall)       <SquidMan72@gmail.com>  *
  *****************************************************************************/
 
 #include <usync.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-static uSyncObject uSyncLocks[_USYNC_LOCK_MAX];
 static int uSyncEnabled = 0;
-static int idcnt = -1;
 
-static int _compare(void* aq, void* bq, int size)
+#define _compare(a, b, size)	(!memcmp(a, b, size))
+#define _copy(a, b, size)	(memcpy(a, b, size))
+#define _clear(a, size)		(memset(a, 0, size))
+
+static int validate_usync_object(uSyncObject* obj)
 {
-	int i;
-	unsigned char* a;
-	unsigned char* b;
-	if(aq == bq)
+	if(_compare(obj->enabled, "uSYNC", 5)) {
 		return 1;
-	a = (unsigned char*)aq;
-	b = (unsigned char*)bq;
-	for(i = 0; i < size; i++) {
-		if(a[i] != b[i])
-			return 0;
-	}
-	return 1;
-}
-
-static void _copy(void* aq, void* bq, int size)
-{
-	int i;
-	unsigned char* a;
-	unsigned char* b;
-	if(aq == bq)
-		return;
-	a = (unsigned char*)aq;
-	b = (unsigned char*)bq;
-	for(i = 0; i < size; i++) {
-		a[i] = b[i];
-	}
-}
-
-static void _clear(void* aq, int size)
-{
-	int i;
-	unsigned char* a;
-	a = (unsigned char*)aq;
-	for(i = 0; i < size; i++)
-		a[i] = 0;
-}
-
-static int validate_usync_object(int idx)
-{
-	uSyncObject obj = uSyncLocks[idx];
-	int oid = 0;
-	if(_compare(obj.enabled, "uSYNC", 5)) {
-		oid = (obj.enabled[5]);
-		if(oid == idx)
-			return 1;
 	}
 	return 0;
 }
 
-static void enable_usync_object(int idx)
+static void enable_usync_object(uSyncObject* obj)
 {
-	uSyncObject* obj = &uSyncLocks[idx];
 	_copy(obj->enabled, "uSYNC", 5);
-	obj->enabled[5] = idx & 0xFF;
 }
 
 int uSyncInit()
 {
-	int i;
-	for(i = 0; i < _USYNC_LOCK_MAX; i++) {
-		_clear(uSyncLocks[i].enabled, 8);
-#ifdef _USYNC_HOLD_DATA
-		uSyncLocks[i].data       = 0;
-#endif
-		uSyncLocks[i].enabled[6] = 0;
-	}
 	uSyncEnabled = 1;
-	idcnt = 0;
 	return uSyncEnabled;
 }
 
 #ifdef _USYNC_HOLD_DATA
-int uSyncCreate(void* data)
+uSyncObject* uSyncCreate(void* data)
 #else
-int uSyncCreate()
+uSyncObject* uSyncCreate()
 #endif
 {
+	uSyncObject* obj;
 	if(!uSyncEnabled)
-		return -1;
-	if(idcnt >= (_USYNC_LOCK_MAX - 1))
-		return -1;
-	uSyncLocks[idcnt].enabled[6] = 0;
+		return 0;
+	obj = malloc(sizeof(uSyncObject));
+	_clear(obj, sizeof(uSyncObject));
+	obj->enabled[5] = 0;
 #ifdef _USYNC_HOLD_DATA
-	uSyncLocks[idcnt].data = data;
+	obj->data = data;
 #endif
-	enable_usync_object(++idcnt);
-	return idcnt;
+	enable_usync_object(obj);
+	return obj;
 }
 
-int uSyncDelete(int idx)
+int uSyncDelete(uSyncObject* obj)
 {
 	if(!uSyncEnabled)
 		return 0;
-	if((idx > idcnt) || (idx < 0))
-		return 0;
-	_clear(uSyncLocks[idcnt].enabled, 8);
+	_clear(obj->enabled, 8);
 #ifdef _USYNC_HOLD_DATA
-	uSyncLocks[idcnt].data = 0;
+	obj->data = 0;
 #endif
-	idcnt--;
+	free(obj);
 	return 1;
 }
 
 #ifdef _USYNC_HOLD_DATA
-void* uSyncObtain(int idx)
+void* uSyncObtain(uSyncObject* obj)
 #else
-int uSyncObtain(int idx)
+int uSyncObtain(uSyncObject* obj)
 #endif
 {
+	int canhas;
 	if(!uSyncEnabled)
 		return 0;
-	if((idx > idcnt) || (idx < 0))
+	if(!validate_usync_object(obj))
 		return 0;
-	if(!validate_usync_object(idx))
-		return 0;
-	if(uSyncLocks[idx].enabled[6]) {
+	if(obj->enabled[5]) {
 		return 0;
 	}else{
-		uSyncLocks[idx].enabled[6] = 1;
+		obj->enabled[5] ^= 1;		/* If 2 processes get here at once,     */
+		canhas = obj->enabled[5];	/* worst case scenario, neither get it. */
 #ifdef _USYNC_HOLD_DATA
-		return uSyncLocks[idx].data;
+		return obj->data * canhas;
 #else
-		return 1;
+		return 1 * canhas;
 #endif
 	}
 }
 
-int uSyncRelease(int idx)
+int uSyncRelease(uSyncObject* obj)
 {
 	if(!uSyncEnabled)
 		return 0;
-	if((idx > idcnt) || (idx < 0))
+	if(!validate_usync_object(obj))
 		return 0;
-	if(!validate_usync_object(idx))
-		return 0;
-	if(uSyncLocks[idx].enabled[6]) {
-		uSyncLocks[idx].enabled[6] = 0;
+	if(obj->enabled[5]) {
+		obj->enabled[5] = 0;
 #ifdef _USYNC_HOLD_DATA
-		uSyncLocks[idx].data = 0;
+		obj->data = 0;
 #endif
 		return 1;
 	}else{

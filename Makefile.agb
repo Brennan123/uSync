@@ -9,4 +9,6 @@ include $(DEVKITARM)/gba_rules
 all:
 	@$(MAKE) -f Makefile
 install:
-	@$(MAKE) -f Makefile install-wii
+	@echo "Cannot install with GBA target."
+clean:
+	@$(MAKE) -f Makefile clean

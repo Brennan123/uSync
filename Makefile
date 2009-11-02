@@ -8,6 +8,9 @@ $(OUTPUT): $(OBJECTS)
 	$(AR) rcs "$(OUTPUT)" $(OBJECTS)
 clean:
 	rm -f "$(OUTPUT)" $(OBJECTS)
-install-wii:
-	cp $(BUILD)/$(BIN) $(DEVKITPRO)/libogc/lib/wii
+install-ppc:
+	cp $(OUTPUT) $(DEVKITPRO)/libogc/lib/wii
 	cp include/usync.h $(DEVKITPRO)/libogc/include
+install-ds:
+	cp $(OUTPUT) $(DEVKITPRO)/libnds/lib
+	cp include/usync.h $(DEVKITPRO)/libnds/include

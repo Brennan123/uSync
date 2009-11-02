@@ -9,4 +9,6 @@ include $(DEVKITARM)/gp32_rules
 all:
 	@$(MAKE) -f Makefile
 install:
-	@$(MAKE) -f Makefile install-wii
+	@echo "Cannot install with gp32 target."
+clean:
+	@$(MAKE) -f Makefile clean

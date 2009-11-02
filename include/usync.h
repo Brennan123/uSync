@@ -5,12 +5,11 @@
 
 #ifndef _USYNC_H
 
-#define _USYNC_LOCK_MAX	256
 /* #define _USYNC_HOLD_DATA */
 
 /* We only use 8 bytes per sync object without holding data. */
 /* Only 12bytes with (on a 32bit system that doesn't raise sizes to align) */
-/* Requires no external libraries (not even a libc) */
+/* Requires malloc, free, memcmp, memcpy, and memset. */
 
 typedef struct {
 	unsigned char	enabled[8]; /* uSYNC#L_ */
@@ -21,17 +20,17 @@ typedef struct {
 
 int uSyncInit();
 #ifdef _USYNC_HOLD_DATA
-int uSyncCreate(void* data);
+uSyncObject* uSyncCreate(void* data);
 #else
-int uSyncCreate();
+uSyncObject* uSyncCreate();
 #endif
-int uSyncDelete(int idx);
+int uSyncDelete(uSyncObject* obj);
 #ifdef _USYNC_HOLD_DATA
-void* uSyncObtain(int idx);
+void* uSyncObtain(uSyncObject* obj);
 #else
-int uSyncObtain(int idx);
+int uSyncObtain(uSyncObject* obj);
 #endif
-int uSyncRelease(int idx);
+int uSyncRelease(uSyncObject* obj);
 
 #define _USYNC_H
 #endif

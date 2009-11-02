@@ -1,11 +1,17 @@
 µSync is a general purpose synchronization library, based on being small and
 lightweight. It requires very little RAM, and is quite fast.
+The following functions _must_ be implemented:
+ * malloc
+ * free
+ * memcmp
+ * memcpy
+ * memset
 
 At last measurement, minimum requirements were:
 8bytes of RAM per sync object. (12bytes on default config)
-1592 bytes for code. (Darwin x86)
-2224 bytes for code. (PPC)
-2240 bytes for code. (ARM)
+1156 bytes for code. (Darwin x86)
+1600 bytes for code. (PPC)
+1760 bytes for code. (ARM)
 
 ------------------------------------
 µSync is:

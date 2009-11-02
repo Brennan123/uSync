@@ -9,4 +9,6 @@ include $(DEVKITARM)/ds_rules
 all:
 	@$(MAKE) -f Makefile
 install:
-	@$(MAKE) -f Makefile install-wii
+	@$(MAKE) -f Makefile install-ds
+clean:
+	@$(MAKE) -f Makefile clean

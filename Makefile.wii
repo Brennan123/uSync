@@ -9,4 +9,6 @@ include $(DEVKITPPC)/wii_rules
 all:
 	@$(MAKE) -f Makefile
 install:
-	@$(MAKE) -f Makefile install-wii
+	@$(MAKE) -f Makefile install-ppc
+clean:
+	@$(MAKE) -f Makefile clean
