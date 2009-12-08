@@ -1,0 +1,31 @@
+ifeq ($(strip $(WIIDEV)),)
+$(error "Set WIIDEV in your environment.")
+endif
+
+include $(WIIDEV)/broadway.mk
+
+OBJS = source/usync.o
+TARGET = libusync.a
+CFLAGS += -Wall -Os -g0 -pedantic -std=c99
+INCLUDES += -Iinclude
+
+include $(WIIDEV)/common.mk
+
+export LIBUSYNC_MAJOR	:= 0
+export LIBUSYNC_MINOR	:= 2
+
+include/usyncversion.h:
+	@echo "#ifndef USYNCVERSION_H_" > $@
+	@echo "#define USYNCVERSION_H_" >> $@
+	@echo >> $@
+	@echo "#define USYNC_VERSION_MAJOR	$(LIBUSYNC_MAJOR)" >> $@
+	@echo "#define USYNC_VERSION_MINOR	$(LIBUSYNC_MINOR)" >> $@
+	@echo >> $@
+	@echo '#define USYNC_VERSION_STRING	"µSync '$(LIBUSYNC_MAJOR).$(LIBUSYNC_MINOR)'"' >> $@
+	@echo >> $@
+	@echo "#endif /* USYNCVERSION_H_ */" >> $@
+
+install: $(TARGET) include/usyncversion.h
+	cp $(TARGET) $(WIIDEV)/lib
+	cp include/usync.h $(WIIDEV)/include
+	cp include/usyncversion.h $(WIIDEV)/include

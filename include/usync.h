@@ -4,8 +4,13 @@
  *****************************************************************************/
 
 #ifndef _USYNC_H
+#define _USYNC_H
 
 #define _USYNC_HOLD_DATA
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* We only use 8 bytes per sync object without holding data. */
 /* Only 12bytes with (on a 32bit system that doesn't raise sizes to align) */
@@ -32,6 +37,9 @@ int uSyncObtain(uSyncObject* obj);
 #endif
 int uSyncRelease(uSyncObject* obj);
 
-#define _USYNC_H
+#ifdef __cplusplus
+};
+#endif
+
 #endif
 

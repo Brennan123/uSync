@@ -4,8 +4,14 @@
  *****************************************************************************/
 
 #include <usync.h>
+#if !defined(BM_BROADWAY)
 #include <stdio.h>
 #include <stdlib.h>
+#endif
+#if defined(BM_BROADWAY)
+#include <malloc.h>
+#endif
+
 #include <string.h>
 
 static int uSyncEnabled = 0;
