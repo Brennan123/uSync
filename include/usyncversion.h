@@ -1,9 +1,0 @@
-#ifndef USYNCVERSION_H_
-#define USYNCVERSION_H_
-
-#define USYNC_VERSION_MAJOR	0
-#define USYNC_VERSION_MINOR	2
-
-#define USYNC_VERSION_STRING	"µSync 0.2"
-
-#endif /* USYNCVERSION_H_ */
